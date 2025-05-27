@@ -5,8 +5,6 @@ app = "neuro-bot"
   dockerfile = "Dockerfile"
 
 [[services]]
-  # Внутренний порт (любое число, бот его не слушает)
   internal_port = 8080
-  protocol = "tcp"
-  # Отключаем HTTP health-checks и веб-роутинг
-  handlers = ["none"]
+  protocol      = "tcp"
+  handlers      = ["none"]
