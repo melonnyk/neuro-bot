@@ -1,7 +1,7 @@
 import os, logging
 import telebot
 from telebot import types
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from db import update_item
 import db
 
@@ -43,7 +43,7 @@ SCORE_INTERPRETATIONS = [
 
 # === КОНЕЦ БЛОКА: Викторина ===
 
-load_dotenv()
+#load_dotenv()
 TOKEN    = os.getenv("TELEGRAM_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
