@@ -3,6 +3,22 @@ import telebot
 from telebot import types
 from db import update_item
 import db
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        # отвечает «200 OK» на любой GET-запрос, чтобы Fly признал машину живой
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"OK")
+
+def run_health_server():
+    server = HTTPServer(("0.0.0.0", 8080), HealthHandler)
+    server.serve_forever()
+
+# запустим health-сервер в фоне
+threading.Thread(target=run_health_server, daemon=True).start()
 
 # (после импортов)
 # === НАЧАЛО БЛОКА: Викторина ===
@@ -47,9 +63,6 @@ ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 logging.basicConfig(level=logging.INFO)
 bot = telebot.TeleBot(TOKEN)
-
-# удаляем все вебхуки перед запуском polling
-bot.delete_webhook()
 
 # Глобальное хранилище состояний для всех FSM-сценариев
 user_states = {}
@@ -321,5 +334,9 @@ def handle_quiz(call):
 def echo_all(msg):
     bot.reply_to(msg, f"Не понял: {msg.text}")
 
-if __name__=='__main__':
+if __name__ == "__main__":
+    # 1) Запускаем health-check сервер
+    threading.Thread(target=run_health_server, daemon=True).start()
+    # 2) Удаляем старый webhook (если есть) и стартуем polling
+    bot.delete_webhook()
     bot.infinity_polling()
