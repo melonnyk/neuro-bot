@@ -1,5 +1,5 @@
 import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 # 1) Определяем класс-обработчик «здоровья»
 class HealthHandler(BaseHTTPRequestHandler):
