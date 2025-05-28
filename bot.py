@@ -11,12 +11,12 @@ class HealthHandler(BaseHTTPRequestHandler):
         self.wfile.write(b"OK")
 
 # 2) Функция для запуска HTTP-сервера на порту 8080
-def start_health_server():
+def run_health_server():
     server = HTTPServer(("0.0.0.0", 8080), HealthHandler)
     server.serve_forever()
 
 # 3) Стартуем его в отдельном потоке до старта бота
-threading.Thread(target=start_health_server, daemon=True).start()
+threading.Thread(target=run_health_server, daemon=True).start()
 
 import logging
 from aiogram import Bot, Dispatcher, types
