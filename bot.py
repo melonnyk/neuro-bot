@@ -48,6 +48,9 @@ ADMIN_ID = int(os.getenv("ADMIN_ID"))
 logging.basicConfig(level=logging.INFO)
 bot = telebot.TeleBot(TOKEN)
 
+# удаляем все вебхуки перед запуском polling
+bot.delete_webhook()
+
 # Глобальное хранилище состояний для всех FSM-сценариев
 user_states = {}
 
