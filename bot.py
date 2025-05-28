@@ -17,9 +17,6 @@ def run_health_server():
     server = HTTPServer(("0.0.0.0", 8080), HealthHandler)
     server.serve_forever()
 
-# запустим health-сервер в фоне
-threading.Thread(target=run_health_server, daemon=True).start()
-
 # (после импортов)
 # === НАЧАЛО БЛОКА: Викторина ===
 
@@ -338,5 +335,5 @@ if __name__ == "__main__":
     # 1) Запускаем health-check сервер
     threading.Thread(target=run_health_server, daemon=True).start()
     # 2) Удаляем старый webhook (если есть) и стартуем polling
-    bot.delete_webhook()
+    bot.remove_webhook()
     bot.infinity_polling()
