@@ -4,27 +4,35 @@ from telebot import types
 from db import update_item
 import db
 import time
-import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
 from dotenv import load_dotenv
 load_dotenv()
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
-TOKEN = os.getenv("TELEGRAM_TOKEN")
-if not TOKEN:
-    logging.error("❌ TELEGRAM_TOKEN is not set in environment")
-    exit(1)
-
+# 1) Определяем класс-обработчик «здоровья»
 class HealthHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        # отвечаем 200 OK на любой GET
+        # Просто возвращаем 200 OK
         self.send_response(200)
         self.send_header("Content-Type", "text/plain")
         self.end_headers()
         self.wfile.write(b"OK")
 
+# 2) Функция для запуска HTTP-сервера на порту 8080
 def start_health_server():
     server = HTTPServer(("0.0.0.0", 8080), HealthHandler)
     server.serve_forever()
+
+# 3) Стартуем его в отдельном потоке до старта бота
+threading.Thread(target=start_health_server, daemon=True).start()
+
+import logging
+from aiogram import Bot, Dispatcher, types
+
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+if not TOKEN:
+    logging.error("❌ TELEGRAM_TOKEN is not set in environment")
+    exit(1)
 
 # (после импортов)
 
