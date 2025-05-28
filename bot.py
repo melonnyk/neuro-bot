@@ -5,7 +5,7 @@ from db import update_item
 import db
 import threading
 import time
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import SimpleHTTPRequestHandler, HTTPServer
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -21,8 +21,8 @@ class HealthHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b"OK")
 
-def run_health_server():
-    server = HTTPServer(("0.0.0.0", 8080), HealthHandler)
+def _run_healthcheck():
+    server = HTTPServer(("0.0.0.0", 8080), SimpleHTTPRequestHandler)
     server.serve_forever()
 
 # (после импортов)
