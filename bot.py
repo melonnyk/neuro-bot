@@ -3,9 +3,9 @@ import telebot
 from telebot import types
 from db import update_item
 import db
-import threading
 import time
-from http.server import SimpleHTTPRequestHandler, HTTPServer
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -16,16 +16,18 @@ if not TOKEN:
 
 class HealthHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        # отвечает «200 OK» на любой GET-запрос, чтобы Fly признал машину живой
+        # отвечаем 200 OK на любой GET
         self.send_response(200)
+        self.send_header("Content-Type", "text/plain")
         self.end_headers()
         self.wfile.write(b"OK")
 
-def _run_healthcheck():
-    server = HTTPServer(("0.0.0.0", 8080), SimpleHTTPRequestHandler)
+def start_health_server():
+    server = HTTPServer(("0.0.0.0", 8080), HealthHandler)
     server.serve_forever()
 
 # (после импортов)
+
 # === НАЧАЛО БЛОКА: Викторина ===
 
 # Здесь определяем вопросы викторины:
@@ -346,7 +348,7 @@ if __name__ == "__main__":
     time.sleep(1)
 
     # 2. Запускаем HTTP-сервер для health checks
-    threading.Thread(target=run_health_server, daemon=True).start()
+    threading.Thread(target=start_health_server, daemon=True).start()
     logging.info("🔗 Health server started on 0.0.0.0:8080")
 
     # 3. Запускаем бесконечное опрос polling
