@@ -340,8 +340,15 @@ def echo_all(msg):
     bot.reply_to(msg, f"Не понял: {msg.text}")
 
 if __name__ == "__main__":
+    # 1. Отрубаем старый вебхук
+    bot.remove_webhook()
+    logging.info("🗑 Webhook removed, waiting 1s…")
+    time.sleep(1)
+
+    # 2. Запускаем HTTP-сервер для health checks
     threading.Thread(target=run_health_server, daemon=True).start()
-    bot.delete_webhook(drop_pending_updates=True)
-    time.sleep(1)  # даём Telegram 1 секунду на удаление вебхука
-    logging.info("🚀 Bot is starting polling...")
+    logging.info("🔗 Health server started on 0.0.0.0:8080")
+
+    # 3. Запускаем бесконечное опрос polling
+    logging.info("🚀 Bot is starting polling…")
     bot.infinity_polling(timeout=30, long_polling_timeout=60)
