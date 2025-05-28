@@ -4,7 +4,14 @@ from telebot import types
 from db import update_item
 import db
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
+
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+if not TOKEN:
+    logging.error("❌ TELEGRAM_TOKEN is not set in environment")
+    exit(1)
+bot = telebot.TeleBot(TOKEN)
 
 class HealthHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -332,8 +339,18 @@ def echo_all(msg):
     bot.reply_to(msg, f"Не понял: {msg.text}")
 
 if __name__ == "__main__":
-    # 1) Запускаем health-check сервер
+    # 1) Запускаем health-сервер в фоне (см. ниже)
     threading.Thread(target=run_health_server, daemon=True).start()
-    # 2) Удаляем старый webhook (если есть) и стартуем polling
-    bot.remove_webhook()
-    bot.infinity_polling()
+
+    # 2) Удаляем webhook
+    bot.delete_webhook(drop_pending_updates=True)
+
+    # 3) Безопасно стартуем polling
+    try:
+        logging.info("🚀 Bot is starting polling...")
+        bot.infinity_polling(timeout=30, long_polling_timeout=60)
+    except Exception as e:
+        logging.exception("❌ Exception in polling, will restart: %s", e)
+        # N секунд паузы и перезапуск
+        time.sleep(5)
+        bot.infinity_polling()
