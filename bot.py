@@ -1,11 +1,3 @@
-import os, logging
-import telebot
-from telebot import types
-from db import update_item
-import db
-import time
-from dotenv import load_dotenv
-load_dotenv()
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
@@ -28,6 +20,14 @@ threading.Thread(target=start_health_server, daemon=True).start()
 
 import logging
 from aiogram import Bot, Dispatcher, types
+import os, logging
+import telebot
+from telebot import types
+from db import update_item
+import db
+import time
+from dotenv import load_dotenv
+load_dotenv()
 
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 if not TOKEN:
