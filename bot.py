@@ -20,14 +20,12 @@ threading.Thread(target=run_health_server, daemon=True).start()
 
 import logging
 from aiogram import Bot, Dispatcher, types
-import os, logging
+import os
 import telebot
-from telebot import types
+from telebot import TeleBot, types
 from db import update_item
 import db
 import time
-from dotenv import load_dotenv
-load_dotenv()
 
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 if not TOKEN:
@@ -74,10 +72,12 @@ SCORE_INTERPRETATIONS = [
 # === КОНЕЦ БЛОКА: Викторина ===
 
 TOKEN    = os.getenv("TELEGRAM_TOKEN")
+if not TOKEN:
+    raise RuntimeError("Переменная окружения TELEGRAM_TOKEN не задана")
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
 
 logging.basicConfig(level=logging.INFO)
-bot = telebot.TeleBot(TOKEN)
+bot = TeleBot(TOKEN)
 
 # Глобальное хранилище состояний для всех FSM-сценариев
 user_states = {}
