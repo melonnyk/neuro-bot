@@ -1,10 +1,10 @@
-import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import threading
 
 # 1) Определяем класс-обработчик «здоровья»
 class HealthHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        # Просто возвращаем 200 OK
+        # Просто возвращаем 200 OK на любой запрос
         self.send_response(200)
         self.send_header("Content-Type", "text/plain")
         self.end_headers()
